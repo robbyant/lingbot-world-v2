@@ -999,7 +999,13 @@ class WanI2VCausal:
                 'k': torch.zeros(shape, dtype=dtype, device=device),
                 'v': torch.zeros(shape, dtype=dtype, device=device),
                 'global_end_index': torch.tensor([0], dtype=torch.long, device=device),
-                'local_end_index': torch.tensor([0], dtype=torch.long, device=device)
+                'local_end_index': torch.tensor([0], dtype=torch.long, device=device),
+                # Python-int mirrors of the two indices above. The attention
+                # layers advance these host-side so the eviction schedule
+                # needs no .item() GPU syncs; the tensors are kept in sync
+                # for external readers.
+                'global_end_int': 0,
+                'local_end_int': 0,
             })
 
         return self_kv_cache
